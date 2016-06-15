@@ -17,9 +17,6 @@ public class klient
 		message_.PushIp(Config.IP2,Config.SERVPORT[0]); //oraz kolejne warstwy: adres i port serwera docelowego
 		message_.PushIp(Config.IP2,Config.SERVPORT[0]);							//						adres węzła końcowego
 		
-		
-		
-
         
         byte[] stringContents = message_.text.getBytes("utf8"); //Pobranie strumienia bajtow z wiadomosci
         DatagramSocket socket = new DatagramSocket(); //Otwarcie gniazda
