@@ -11,49 +11,14 @@ public class klient
 	
     public static void main(String[] args) throws IOException, SocketException
     {
-        
-		/*int i=0;
-		int j=0;
+		message message_=new message("Witaj Świecie! :D\n"); //Tworzymy zmienną wiadomości
 		
-		if(args.length != 2)
-		{
-			System.out.println("Użycie: klient [id_klienta] [id_trasy]");
-			System.out.println("[id_klienta] - (0 lub 1) decyduje o wybrannym porcie docelowym, nie mogą jednocześnie pracować dwaj różni kilenci na tym samym porcie");
-			System.out.println("[id_trasy] - (0 lub 1) decyduje o kolejności węzłów pośredniczących (są dwa węzły pośrednie i jeden końcowy, więc i tylko dwie trasy są możliwe)");
-			System.exit(0);
-		}
-    
-		try
-		{
-			i = Integer.parseInt(args[0]); //identyfikator klienta wczytywany z linii komend, decyduje o wykorzystywanym
-			j = Integer.parseInt(args[1]); //identyfikator trasy wczytywany z linii komend, decyduje o kolejności węzłów pośreniczących
-		}
-		catch (NumberFormatException e) 
-		{
-			System.err.println("Argument" + args[0] + " must be an integer.");
-			System.exit(1);
-		}(=*/
-
-		message message_=new message(); //Tworzymy zmienną wiadomości
-	
-		//if(j==0)	//wybór klienta wybiera nam również trasę
-		{
-			message_.setFirstNod(Config.IP1); //ustalamy adres pierwszego węzła
-        
-			message_.addText("Witaj Świecie! :D\n");  //dodajemy treść wiadomości
-			message_.addFinalIpPort(Config.IP2,Config.SERVPORT[i]); //oraz kolejne warstwy: adres i port serwera docelowego
-			message_.addNodIp(Config.IP2);							//						adres węzła końcowego
-			//message_.addNodIp(Config.IP1);							//ewentualne dodatkowe węzły pośrednie
-		}
-		/*else
-		{
-			message_.setFirstNod(Config.IP2); //Tworzymy zmienną wiadomości z adresem pierwszego węzła
-        
-			message_.addText("Witaj Świecie! :D\n");  //dodajemy treść wiadomości
-			message_.addFinalIpPort(Config.IP2,Config.SERVPORT[i]); //oraz kolejne warstwy: adres i port serwera docelowego
-			message_.addNodIp(Config.IP2);							//						adres węzła końcowego
-			//message_.addNodIp(Config.IP2);															//ewentualne dodatkowe węzły pośrednie
-		}*/
+		message_.setFirstNod(Config.IP1,9000); //ustalamy adres pierwszego węzła
+		message_.PushIp(Config.IP2,Config.SERVPORT[0]); //oraz kolejne warstwy: adres i port serwera docelowego
+		message_.PushIp(Config.IP2,Config.SERVPORT[0]);							//						adres węzła końcowego
+		
+		
+		
 
         
         byte[] stringContents = message_.text.getBytes("utf8"); //Pobranie strumienia bajtow z wiadomosci
@@ -61,8 +26,8 @@ public class klient
 		while(true)
 		{
 			DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
-			sentPacket.setAddress(message_.firstNod);
-			sentPacket.setPort(Config.NODPORT[i]);
+			sentPacket.setAddress(message_.address);
+			sentPacket.setPort(Config.NODPORT[0]);
 			socket.send(sentPacket);
 			System.out.println(message_.text );
 

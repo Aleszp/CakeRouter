@@ -37,15 +37,13 @@ public class Node
             String message_ = new String(recievedPacket.getData(), 0, length, "utf8");
 
             // Port i host, ktory wyslal nam zapytanie
-            InetAddress address = recievedPacket.getAddress();
-            int port = recievedPacket.getPort();
+            InetAddress clientAddress = recievedPacket.getAddress();
+            int clientPort = recievedPacket.getPort();
 
             System.out.println(message_); //debuggowanie
            
             //gniazdo dla danych przekazywanych dalej
 			DatagramSocket socketOut = new DatagramSocket();
-			
-			
 
 			DatagramPacket receivedPacket = new DatagramPacket( new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
 			socketOut.setSoTimeout(1000);
@@ -53,8 +51,10 @@ public class Node
 			try
 			{
 				socketOut.receive(receivedPacket);
-				socketIn.send(receivedPacket);
-				
+				DatagramPacket tobBeSent=receivedPacket;
+				tobBeSent.setAddress(clientAddress);
+				tobBeSent.setPort(clientPort);
+				socketIn.send(tobBeSent);
 				
 				String receivedMessage = new String(receivedPacket.getData(), 0, length, "utf8");
 				System.out.println("Odpowiedź: "+receivedMessage);
@@ -62,8 +62,8 @@ public class Node
 			catch (SocketTimeoutException ste)
 			{
 				System.out.println("No response...");
-				byte[] byteResponse=String.format("Failed on %d.%d.%d.%d:%d", me[0],me[1],me[2],me[3],port).getBytes("utf8");
-				DatagramPacket response = new DatagramPacket(byteResponse, byteResponse.length, address, 9000);
+				byte[] byteResponse=String.format("Failed on %d.%d.%d.%d:%d", me[0],me[1],me[2],me[3],listen_port).getBytes("utf8");
+				DatagramPacket response = new DatagramPacket(byteResponse, byteResponse.length, clientAddress, clientPort);
 				socketIn.send(response);
 			}        
 
