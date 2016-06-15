@@ -7,9 +7,21 @@ public class Server
 
     public static void main(String[] args) throws Exception
     {
-
+		if(args.length != 1)
+		{
+			System.out.println("Użycie: Node [port]");
+			System.out.println("[port] - (1024-65535) decyduje o wybrannym porcie na którym będzie nasłuchiwać, zaleca się użycie wartości >8000");
+			System.exit(0);
+		}
+		int listen_port=Integer.parseInt(args[0]);
+		if(listen_port<1024 || listen_port>65535)
+		{
+			System.out.println("Nieprawidłowy numer portu.");
+			System.exit(0);
+		}
+		int me[]={127,0,0,1};
         //Otwarcie gniazda z okreslonym portem
-        DatagramSocket datagramSocket = new DatagramSocket(Config.SERVPORT[0]);
+        DatagramSocket datagramSocket = new DatagramSocket(listen_port);
 
         byte[] byteResponse = "OK".getBytes("utf8");
 

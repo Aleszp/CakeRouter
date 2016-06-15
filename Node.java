@@ -41,12 +41,21 @@ public class Node
             int clientPort = recievedPacket.getPort();
 
             System.out.println(message_); //debuggowanie
+            message msg=new message(message_);
+            msg.pullIp();
+            System.out.println(msg.text); //debuggowanie
            
             //gniazdo dla danych przekazywanych dalej
 			DatagramSocket socketOut = new DatagramSocket();
-
+			byte[] stringContents = msg.text.getBytes("utf8");
+			
+			DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
+			sentPacket.setAddress(msg.address);
+			sentPacket.setPort(msg.port);
+			socketOut.send(sentPacket);
+			
 			DatagramPacket receivedPacket = new DatagramPacket( new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
-			socketOut.setSoTimeout(1000);
+			socketOut.setSoTimeout(800);
 
 			try
 			{
@@ -56,6 +65,7 @@ public class Node
 				tobBeSent.setPort(clientPort);
 				socketIn.send(tobBeSent);
 				
+				length = recievedPacket.getLength();
 				String receivedMessage = new String(receivedPacket.getData(), 0, length, "utf8");
 				System.out.println("Odpowiedź: "+receivedMessage);
 			}

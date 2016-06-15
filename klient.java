@@ -13,30 +13,31 @@ public class klient
     {
 		message message_=new message("Witaj Świecie! :D\n"); //Tworzymy zmienną wiadomości
 		
-		message_.setFirstNod(Config.IP1,9000); //ustalamy adres pierwszego węzła
-		message_.PushIp(Config.IP2,Config.SERVPORT[0]); //oraz kolejne warstwy: adres i port serwera docelowego
-		message_.PushIp(Config.IP2,Config.SERVPORT[0]);							//						adres węzła końcowego
+		message_.setFirstNod(Config.IP1,Config.PORT[0]); //ustalamy adres pierwszego węzła
 		
+		//message_.pushIp(Config.IP2,Config.PORT[2]); //oraz kolejne warstwy: adres i port serwera docelowego
+		message_.pushIp(Config.IP2,Config.PORT[1]);						//  adres i port węzła końcowego
         
         byte[] stringContents = message_.text.getBytes("utf8"); //Pobranie strumienia bajtow z wiadomosci
-        DatagramSocket socket = new DatagramSocket(); //Otwarcie gniazda
+        
+        DatagramSocket socket = new DatagramSocket(); //Otwarcie gniazda 
 		while(true)
 		{
 			DatagramPacket sentPacket = new DatagramPacket(stringContents, stringContents.length);
 			sentPacket.setAddress(message_.address);
-			sentPacket.setPort(Config.NODPORT[0]);
+			sentPacket.setPort(message_.port);
 			socket.send(sentPacket);
-			System.out.println(message_.text );
+			System.out.println("Wysyłam: \n"+message_.text );
 
 			DatagramPacket receivedPacket = new DatagramPacket( new byte[Config.BUFFER_SIZE], Config.BUFFER_SIZE);
-			socket.setSoTimeout(1000);
+			socket.setSoTimeout(2000);
 
 			try
 			{
 				socket.receive(receivedPacket);
 				int length = receivedPacket.getLength();
 				String receivedMessage = new String(receivedPacket.getData(), 0, length, "utf8");
-				System.out.println("Serwer: "+receivedMessage);
+				System.out.println("Serwer: \n"+receivedMessage);
 			}
 			catch (SocketTimeoutException ste)
 			{
